@@ -8,6 +8,8 @@ import { Currency } from '../services/currency';
 import { CommonModule } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { IonButtons } from '@ionic/angular/standalone';
+import { IonBackButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +18,7 @@ import { RouterLink } from '@angular/router';
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent,
     IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonButton,
-    FormsModule, CommonModule, RouterLink
+    FormsModule, CommonModule, RouterLink, IonButtons, IonBackButton
   ],
 })
 export class HomePage implements OnInit {
@@ -28,6 +30,14 @@ export class HomePage implements OnInit {
 
   constructor(private currencyService: Currency) {} 
 
+searchTerm: string = '';
+
+get filteredCurrencies() {
+  if (!this.searchTerm) return this.currencies;
+  return this.currencies.filter(c => 
+    c.toLowerCase().includes(this.searchTerm.toLowerCase())
+  );
+}
   ngOnInit() {
   this.currencyService.getRates(this.fromCurrency).subscribe((data: any) => {
     this.currencies = Object.keys(data.conversion_rates);
@@ -38,7 +48,8 @@ export class HomePage implements OnInit {
     next: (data: any) => {
       this.currencies = Object.keys(data.conversion_rates);
       const rate = data.conversion_rates[this.toCurrency];
-      this.result = this.amount * rate;
+      const valorBruto = this.amount * rate;
+      this.result = Math.round(valorBruto * 100) / 100;
 
       localStorage.setItem('taxas_' + this.fromCurrency, JSON.stringify(data.conversion_rates));
 
@@ -57,7 +68,8 @@ export class HomePage implements OnInit {
       if (cache) {
         const rates = JSON.parse(cache);
         this.currencies = Object.keys(rates);
-        this.result = this.amount * rates[this.toCurrency];
+        const valorBruto = this.amount * rates[this.toCurrency];
+        this.result = Math.round(valorBruto * 100) / 100;
       }
     }
   });

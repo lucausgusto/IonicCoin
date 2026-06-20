@@ -14,18 +14,25 @@
   </ion-header>
 
   <ion-item>
+  <ion-label position="floating">Buscar moeda</ion-label>
+  <ion-input [(ngModel)]="searchTerm" placeholder="Ex: USD, EUR, BRL"></ion-input>
+</ion-item>
+
+  <ion-item>
   <ion-label>De:</ion-label>
   <ion-select [(ngModel)]="fromCurrency">
-    <ion-select-option *ngFor="let c of currencies" [value]="c">{{ c }}</ion-select-option>
+    <ion-select-option *ngFor="let c of filteredCurrencies" [value]="c">{{ c }}</ion-select-option>
   </ion-select>
 </ion-item>
 
-  <ion-button (click)="swap()">⇄ Inverter</ion-button>
+  <div style="text-align: center;">
+  <ion-button (click)="swap()" fill="outline">⇄ Inverter</ion-button>
+</div>
 
 <ion-item>
   <ion-label>Para:</ion-label>
   <ion-select [(ngModel)]="toCurrency">
-    <ion-select-option *ngFor="let c of currencies" [value]="c">{{ c }}</ion-select-option>
+    <ion-select-option *ngFor="let c of filteredCurrencies" [value]="c">{{ c }}</ion-select-option>
   </ion-select>
 </ion-item>
 
@@ -34,8 +41,8 @@
     <ion-input type="number" [(ngModel)]="amount"></ion-input>
   </ion-item>
 
-  <ion-button (click)="convert()">Converter</ion-button>
+  <ion-button (click)="convert()" expand="block" color="success">Converter</ion-button>
 
-  <h2 *ngIf="result !== null">Resultado: {{ result }}</h2>
+  <h2 *ngIf="result !== null">{{ amount }} {{ fromCurrency }} = {{ result }} {{ toCurrency }}</h2>
   <ion-button routerLink="/history">Ver Histórico</ion-button>
 </ion-content>
